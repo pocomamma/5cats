@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>親子の信頼関係の土台づくりBOOK</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@300;400;500&family=Zen+Maru+Gothic:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Zen Maru Gothic"', 'sans-serif'],
+            serif: ['"Kiwi Maru"', 'serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    /* アニメーションとテーマのトランジション */
+    .page-transition {
+      transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+    .hidden-page {
+      opacity: 0;
+      transform: translateX(20px);
+      pointer-events: none;
+      position: absolute;
+      width: 100%;
+    }
+    .active-page {
+      opacity: 1;
+      transform: translateX(0);
+      position: relative;
+    }
+    
+    /* テーマ定義 */
+    .theme-natural {
+      background-color: #f7f5f0;
+      color: #2d3a31;
+    }
+    .theme-natural .card {
+      background-color: #ffffff;
+      border-color: #e6e1da;
+    }
+    .theme-natural .accent-bg {
+      background-color: #eef3ef;
+    }
+
+    .theme-sepia {
+      background-color: #f3ece0;
+      color: #433422;
+    }
+    .theme-sepia .card {
+      background-color: #faf4eb;
+      border-color: #e3d5c1;
+    }
+    .theme-sepia .accent-bg {
+      background-color: #ebdcb9;
+    }
+
+    .theme-light {
+      background-color: #ffffff;
+      color: #1f2937;
+    }
+    .theme-light .card {
+      background-color: #f9fafb;
+      border-color: #e5e7eb;
+    }
+    .theme-light .accent-bg {
+      background-color: #f3f4f6;
+    }
+
+    /* 文字サイズ定義 */
+    .text-sz-normal { font-size: 1rem; line-height: 1.75; }
+    .text-sz-large { font-size: 1.125rem; line-height: 1.8; }
+    .text-sz-xlarge { font-size: 1.25rem; line-height: 1.85; }
+
+    /* しおりの揺れアニメーション */
+    @keyframes pulse-soft {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .pulse-btn {
+      animation: pulse-soft 2s infinite;
+    }
+  </style>
+</head>
+<body class="theme-natural font-sans min-h-screen flex flex-col transition-colors duration-300">
+
+  <!-- ヘッダー / 操作パネル -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-stone-200/60 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+      <span class="text-emerald-600 text-lg"><i class="fa-solid fa-seedling"></i></span>
+      <h1 class="font-bold text-xs sm:text-sm text-stone-700 tracking-wider">親子の信頼関係の土台づくりBOOK</h1>
+    </div>
+    
+    <div class="flex items-center space-x-3">
+      <!-- 文字サイズ変更ボタン -->
+      <div class="flex items-center bg-stone-100 rounded-full p-1 text-xs">
+        <button onclick="changeFontSize('normal')" id="btn-sz-normal" class="px-2 py-1 rounded-full font-bold bg-white text-stone-800 shadow-sm transition-all">標準</button>
+        <button onclick="changeFontSize('large')" id="btn-sz-large" class="px-2 py-1 rounded-full text-stone-500 hover:text-stone-800 transition-all">大</button>
+        <button onclick="changeFontSize('xlarge')" id="btn-sz-xlarge" class="px-2 py-1 rounded-full text-stone-500 hover:text-stone-800 transition-all">特大</button>
+      </div>
+
+      <!-- テーマ切り替え -->
+      <div class="relative">
+        <button onclick="toggleThemeMenu()" class="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 hover:bg-stone-200 transition-all" title="背景色の変更">
+          <i class="fa-solid fa-palette"></i>
+        </button>
+        <div id="theme-menu" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-xl shadow-lg border border-stone-100 p-2 space-y-1">
+          <button onclick="setTheme('natural')" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-stone-700 hover:bg-[#eef3ef] flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 rounded-full bg-[#f7f5f0] border border-stone-300"></span>
+            <span>ナチュラル</span>
+          </button>
+          <button onclick="setTheme('sepia')" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-stone-700 hover:bg-[#ebdcb9] flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 rounded-full bg-[#f3ece0] border border-stone-300"></span>
+            <span>セピア</span>
+          </button>
+          <button onclick="setTheme('light')" class="w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium text-stone-700 hover:bg-stone-100 flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 rounded-full bg-white border border-stone-300"></span>
+            <span>ホワイト</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 読書進行バー -->
+  <div class="w-full bg-stone-200 h-1.5 sticky top-[53px] z-50">
+    <div id="progress-bar" class="bg-emerald-500 h-1.5 transition-all duration-300" style="width: 0%;"></div>
+  </div>
+
+  <!-- メインコンテンツエリア -->
+  <main class="flex-grow max-w-2xl w-full mx-auto px-4 py-6 md:py-10 flex flex-col justify-center relative overflow-hidden" id="book-container">
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 0: 表紙 -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-0" class="page-transition active-page space-y-8 text-center py-4">
+      <div class="space-y-4">
+        <span class="inline-block bg-rose-100 text-rose-600 font-bold px-4 py-1.5 rounded-full text-sm tracking-widest shadow-sm">
+          🎁 LINE登録特典
+        </span>
+        <p class="text-stone-500 text-xs sm:text-sm font-semibold tracking-widest uppercase">【保存版】0歳から思春期まで活かせる</p>
+      </div>
+
+      <!-- 表紙メインカード -->
+      <div class="bg-white border-2 border-emerald-600/20 rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
+        <!-- 背景のデコレーションサークル -->
+        <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-50 rounded-full opacity-60"></div>
+        <div class="absolute -bottom-12 -left-12 w-40 h-40 bg-rose-50 rounded-full opacity-60"></div>
+
+        <div class="relative space-y-6">
+          <span class="text-emerald-600/10 text-7xl block"><i class="fa-solid fa-heart-pulse"></i></span>
+          <h2 class="font-serif text-2xl sm:text-3.5xl font-bold leading-snug tracking-normal text-emerald-800">
+            親子の信頼関係の<br>
+            <span class="text-rose-500 relative">
+              土台づくりBOOK
+              <span class="absolute left-0 bottom-1 w-full h-2 bg-rose-200/60 -z-10"></span>
+            </span>
+          </h2>
+          <div class="w-16 h-1 bg-stone-300 mx-auto rounded-full"></div>
+          <p class="text-stone-600 text-sm sm:text-base leading-relaxed font-medium">
+            〜子どもが「何があっても帰ってこられる場所」になるために〜
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <p class="text-xs text-stone-400">
+          <i class="fa-solid fa-book-open mr-1"></i> 画面をスワイプするか、下のボタンでめくれます
+        </p>
+        <button onclick="nextPage()" class="pulse-btn inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+          <span>本を読む</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 1: 目次 -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-1" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xl"><i class="fa-solid fa-list-ul"></i></span>
+        <h3 class="font-serif text-2xl font-bold text-stone-800">もくじ</h3>
+        <p class="text-xs text-stone-400">各章をタップして直接移動することもできます</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-1">
+        <button onclick="goToPage(2)" class="text-left p-3 rounded-xl border border-stone-200 bg-white hover:bg-emerald-50/50 hover:border-emerald-300 transition-all flex items-center space-x-3">
+          <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-xs">前</span>
+          <span class="text-sm font-semibold text-stone-700">はじめに</span>
+        </button>
+        <!-- 目次ループ -->
+        <script>
+          const chapters = [
+            "親子関係は0歳から始まっている",
+            "子どもが安心できる親の共通点",
+            "自己肯定感を育てる声かけ",
+            "「抱っこ」が持つ本当の力",
+            "子どもが話してくれる親になる聞き方",
+            "親のイライラとの付き合い方",
+            "思春期でも親子関係が良い家庭の共通点",
+            "忙しいママでもできる1日5分のふれあい習慣",
+            "ベビーマッサージが育む「愛着」の力",
+            "子育てで一番大切なこと"
+          ];
+          chapters.forEach((title, idx) => {
+            const num = String(idx + 1).padStart(2, '0');
+            document.write(`
+              <button onclick="goToPage(${idx + 3})" class="text-left p-3 rounded-xl border border-stone-200 bg-white hover:bg-emerald-50/50 hover:border-emerald-300 transition-all flex items-center space-x-3">
+                <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-xs font-mono">${num}</span>
+                <span class="text-sm font-semibold text-stone-700 truncate">${title}</span>
+              </button>
+            `);
+          });
+        </script>
+        <button onclick="goToPage(13)" class="text-left p-3 rounded-xl border border-stone-200 bg-white hover:bg-emerald-50/50 hover:border-emerald-300 transition-all flex items-center space-x-3">
+          <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-xs">後</span>
+          <span class="text-sm font-semibold text-stone-700">おわりに</span>
+        </button>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 2: はじめに -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-2" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-rose-400 text-2xl"><i class="fa-solid fa-leaf"></i></span>
+        <h3 class="font-serif text-2xl font-bold text-stone-800">はじめに</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-2">
+        <p class="text-rose-500 font-bold text-center text-lg">「子育て、これで合っているのかな？」</p>
+        
+        <p>赤ちゃんが生まれると、毎日が必死です。</p>
+        <p>授乳、寝かしつけ、おむつ替え。気づけば一日が終わっている。</p>
+        
+        <div class="bg-rose-50/60 rounded-xl p-4 border border-rose-100 text-stone-700 space-y-2">
+          <p class="font-bold text-emerald-800"><i class="fa-solid fa-circle-check mr-2"></i>でも実は、この何気ない毎日の積み重ねが、将来の親子関係を作っています。</p>
+          <ul class="list-disc pl-5 space-y-1 text-xs sm:text-sm">
+            <li>思春期になっても話をしてくれる。</li>
+            <li>困った時に相談してくれる。</li>
+            <li>大人になっても「会いたい」と思ってくれる。</li>
+          </ul>
+        </div>
+
+        <p>そんな親子関係は、特別な家庭だけのものではありません。</p>
+        <p>このBOOKでは、0歳の今からできる「親子の信頼関係の土台づくり」をお伝えします。</p>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 3: 01 親子関係は0歳から始まっている -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-3" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xs font-bold tracking-widest uppercase block font-mono">CHAPTER 01</span>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-stone-800">親子関係は0歳から始まっている</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-3">
+        <p>赤ちゃんは言葉が分からないように見えて、実は毎日たくさんのことを感じています。</p>
+        
+        <div class="grid grid-cols-1 gap-3 py-2">
+          <div class="flex items-center space-x-3 bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
+            <span class="text-emerald-500"><i class="fa-solid fa-child-baby text-lg"></i></span>
+            <span>泣いた時に抱っこしてもらえた。</span>
+          </div>
+          <div class="flex items-center space-x-3 bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
+            <span class="text-emerald-500"><i class="fa-solid fa-comment-dots text-lg"></i></span>
+            <span>不安な時に声をかけてもらえた。</span>
+          </div>
+          <div class="flex items-center space-x-3 bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
+            <span class="text-emerald-500"><i class="fa-solid fa-face-smile text-lg"></i></span>
+            <span>目を見て笑いかけてもらえた。</span>
+          </div>
+        </div>
+
+        <p>そんな経験の積み重ねが、</p>
+        <div class="text-center py-4 bg-rose-50 rounded-xl border border-rose-100">
+          <p class="text-rose-600 text-xl font-bold">「自分は大切にされている」</p>
+          <p class="text-stone-500 text-xs mt-1">という安心感になります。</p>
+        </div>
+        <p class="font-bold text-center text-emerald-800">これが親子関係の土台です。</p>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 4: 02 子どもが安心できる親の共通点 -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-4" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xs font-bold tracking-widest uppercase block font-mono">CHAPTER 02</span>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-stone-800">子どもが安心できる親の共通点</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-4">
+        <p class="text-lg text-emerald-700 text-center font-bold">完璧な親である必要はありません。</p>
+        <p>子どもが求めているのは、</p>
+
+        <div class="relative py-4 my-2 text-center bg-stone-50 rounded-2xl border border-stone-200">
+          <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-stone-300 text-stone-700 text-xs px-3 py-0.5 rounded-full">
+            間違いではない
+          </div>
+          <p class="text-stone-400 line-through text-base font-bold">「いつも正しい親」</p>
+          <p class="text-stone-400 text-xs my-1">ではなく、</p>
+          <p class="text-rose-600 text-xl font-bold">「自分の気持ちを受け止めてくれる親」</p>
+          <p class="text-stone-500 text-xs mt-1">です。</p>
+        </div>
+
+        <div class="flex justify-around py-2">
+          <span class="bg-blue-50 text-blue-700 font-bold px-4 py-2 rounded-xl text-sm border border-blue-100">泣いてもいい。</span>
+          <span class="bg-orange-50 text-orange-700 font-bold px-4 py-2 rounded-xl text-sm border border-orange-100">失敗してもいい。</span>
+        </div>
+
+        <p class="text-center font-bold text-stone-700">そんな安心感が、子どもの挑戦する力を育てます。</p>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 5: 03 自己肯定感を育てる声かけ -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-5" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xs font-bold tracking-widest uppercase block font-mono">CHAPTER 03</span>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-stone-800">自己肯定感を育てる声かけ</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-5">
+        <p>自己肯定感は褒めることで育つと思われがちです。</p>
+        <p class="font-bold text-center text-emerald-800">でも本当に大切なのは、結果ではなく存在を認めること。</p>
+
+        <!-- 比較カード -->
+        <div class="space-y-3">
+          <div class="bg-rose-50 rounded-xl p-4 border border-rose-200 flex items-start space-x-3">
+            <span class="text-rose-500 text-xl font-bold mt-0.5"><i class="fa-solid fa-circle-xmark"></i></span>
+            <div>
+              <p class="text-xs text-rose-500 font-bold">こんな褒め方だけで終わるより...</p>
+              <p class="font-bold text-stone-700 mt-1">「すごいね！」</p>
+            </div>
+          </div>
+          
+          <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-200 flex items-start space-x-3">
+            <span class="text-emerald-500 text-xl font-bold mt-0.5"><i class="fa-solid fa-circle-check"></i></span>
+            <div class="space-y-1">
+              <p class="text-xs text-emerald-600 font-bold">心に残るうれしい言葉</p>
+              <p class="font-bold text-stone-800"><span class="text-emerald-600">⭕</span> 「頑張ったね」</p>
+              <p class="font-bold text-stone-800"><span class="text-emerald-600">⭕</span> 「楽しそうだったね」</p>
+              <p class="font-bold text-rose-600"><span class="text-rose-500">⭕</span> 「ママはあなたが大好きだよ」</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-sm text-stone-500 text-center">存在そのものを丸ごと抱きしめる言葉が、心の根っこを作ります。</p>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 6: 04 「抱っこ」が持つ本当の力 -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-6" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xs font-bold tracking-widest uppercase block font-mono">CHAPTER 04</span>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-stone-800">「抱っこ」が持つ本当の力</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-6">
+        <p class="text-emerald-800 font-bold text-center text-lg">「抱き癖」なんて気にしなくて大丈夫。</p>
+        
+        <div class="bg-rose-50/50 border border-rose-100 rounded-2xl p-5 text-center space-y-3">
+          <span class="text-rose-400 text-4xl block"><i class="fa-solid fa-hands-holding-child"></i></span>
+          <p class="font-bold text-rose-700">抱っこは甘やかしではなく、<br>安心を届けるコミュニケーションです。</p>
+        </div>
+
+        <p>たくさん抱っこされた子ほど、</p>
+        <p class="bg-stone-50 border-l-4 border-emerald-500 pl-4 py-2 font-bold text-stone-700">
+          安心して親から離れ、自分の世界を広げていけると言われています。
+        </p>
+        
+        <p class="text-center text-stone-600 font-bold">今しかできない抱っこを大切にしてください。</p>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 7: 05 子どもが話してくれる親になる聞き方 -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-7" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xs font-bold tracking-widest uppercase block font-mono">CHAPTER 05</span>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-stone-800">子どもが話してくれる聞き方</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-7">
+        <p>子どもが将来、大きくなってから話してくれなくなる理由は、</p>
+        <p class="text-rose-600 font-bold text-center bg-rose-50 py-2 rounded-lg">「話を聞いてもらえなかった」経験の積み重ね</p>
+        <p>かもしれません。</p>
+
+        <p class="text-emerald-800 font-bold">大切なのはアドバイスではなく共感です。</p>
+
+        <!-- 比較リスト -->
+        <div class="space-y-3">
+          <div class="bg-rose-50/70 border border-rose-100 rounded-xl p-3 flex items-center space-x-3">
+            <span class="text-rose-500 font-bold"><i class="fa-solid fa-circle-xmark"></i></span>
+            <span class="text-stone-500 font-bold">❌ 「だから言ったでしょ」</span>
+          </div>
+          <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-3 space-y-1">
+            <div class="flex items-center space-x-3">
+              <span class="text-emerald-500 font-bold"><i class="fa-solid fa-circle-check"></i></span>
+              <span class="text-stone-800 font-bold">⭕ 「そうだったんだね」</span>
+            </div>
+            <div class="flex items-center space-x-3 pl-7">
+              <span class="text-stone-800 font-bold">⭕ 「悲しかったね」</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="font-bold text-center text-stone-700">まずは気持ちを受け止めること。<br>その積み重ねが、一生ものの信頼になります。</p>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 8: 06 親のイライラとの付き合い方 -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-8" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xs font-bold tracking-widest uppercase block font-mono">CHAPTER 06</span>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-stone-800">親のイライラとの付き合い方</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-8">
+        <p>どんなに子どもが大好きでもイライラする日があります。それは当たり前です。</p>
+        
+        <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 space-y-2">
+          <p class="text-emerald-800 font-bold text-center">大切なのは、「怒らないこと」ではなく、</p>
+          <p class="text-rose-600 font-bold text-center text-lg">「怒った後に関係を修復すること」</p>
+        </div>
+
+        <div class="bg-white border-2 border-dashed border-stone-300 rounded-xl p-4 text-center">
+          <p class="font-bold text-stone-700">「さっきは大きな声を出してごめんね」</p>
+        </div>
+
+        <p>その一言だけで、子どもは心の底から安心します。</p>
+        <p class="text-center font-bold text-emerald-800">完璧な親を目指さなくて大丈夫です。</p>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 9: 07 思春期でも親子関係が良い家庭の共通点 -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-9" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xs font-bold tracking-widest uppercase block font-mono">CHAPTER 07</span>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-stone-800">思春期でも良い関係の共通点</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-9">
+        <p class="text-rose-500 font-bold text-center">思春期になって急に良い関係は作れません。</p>
+        
+        <p>小さな頃から、</p>
+        <div class="bg-stone-50 rounded-xl p-4 border border-stone-200 space-y-2">
+          <div class="flex items-center space-x-2"><span class="text-emerald-500">✔</span> <span>話をしっかり聞く</span></div>
+          <div class="flex items-center space-x-2"><span class="text-emerald-500">✔</span> <span>どんな気持ちも受け止める</span></div>
+          <div class="flex items-center space-x-2"><span class="text-emerald-500">✔</span> <span>まずは否定しない</span></div>
+        </div>
+
+        <p>これらをコツコツ続けてきた家庭ほど、思春期になっても温かい親子関係や会話が自然と残ります。</p>
+        
+        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center">
+          <p class="font-bold text-emerald-800">「親子関係は、毎日の積み立て貯金と同じ」</p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 10: 08 忙しいママでもできる1日5分のふれあい習慣 -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-10" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xs font-bold tracking-widest uppercase block font-mono">CHAPTER 08</span>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-stone-800">1日5分のふれあい習慣</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-10">
+        <p class="font-bold text-emerald-800 text-center text-lg">特別なイベントは必要ありません。</p>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-rose-50/50 p-3 rounded-xl border border-rose-100 text-center">
+            <span class="text-rose-400 block text-lg mb-1"><i class="fa-solid fa-sun"></i></span>
+            <span class="text-xs sm:text-sm font-bold text-stone-700">朝のぎゅー</span>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100 text-center">
+            <span class="text-emerald-500 block text-lg mb-1"><i class="fa-solid fa-comment-medical"></i></span>
+            <span class="text-xs sm:text-sm font-bold text-stone-700">おむつ替えの声かけ</span>
+          </div>
+          <div class="bg-rose-50/50 p-3 rounded-xl border border-rose-100 text-center">
+            <span class="text-rose-400 block text-lg mb-1"><i class="fa-solid fa-bath"></i></span>
+            <span class="text-xs sm:text-sm font-bold text-stone-700">お風呂のスキンシップ</span>
+          </div>
+          <div class="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100 text-center">
+            <span class="text-emerald-500 block text-lg mb-1"><i class="fa-solid fa-moon"></i></span>
+            <span class="text-xs sm:text-sm font-bold text-stone-700">寝る前のハグ</span>
+          </div>
+        </div>
+
+        <p class="text-center font-bold text-stone-800">1日わずか5分でも十分です。</p>
+        <p class="text-sm">子どもは時間の長さではなく、<span class="text-rose-600 font-bold">「ママが今、自分だけをしっかり見てくれている」</span>という実感に満たされています。</p>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 11: 09 ベビーマッサージが育む「愛着」の力 -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-11" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xs font-bold tracking-widest uppercase block font-mono">CHAPTER 09</span>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-stone-800">ベビーマッサージと「愛着」</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-11">
+        <p class="text-emerald-800 font-bold text-center">ベビーマッサージは、赤ちゃんのためだけではありません。</p>
+        
+        <div class="bg-rose-50 border border-rose-100 rounded-2xl p-4 text-center space-y-2">
+          <p class="text-sm">肌と肌を触れ合わせることで、ママも赤ちゃんも</p>
+          <p class="text-rose-600 font-bold text-xl">幸せホルモン「オキシトシン」</p>
+          <p class="text-sm">がたっぷりと分泌されます。</p>
+        </div>
+
+        <p>赤ちゃんは心地よさに安心し、ママは我が子がいとおしくてたまらなくなる。</p>
+        <p class="bg-stone-50 border-l-4 border-rose-400 pl-4 py-2 text-stone-700">
+          その毎日の積み重ねが、お互いのゆるぎない「愛着形成」につながります。
+        </p>
+
+        <p class="text-xs text-stone-500">※愛着は、子どもの将来の自己肯定感や人間関係の基礎を作ると言われています。</p>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 12: 10 子育てで一番大切なこと -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-12" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-emerald-500 text-xs font-bold tracking-widest uppercase block font-mono">CHAPTER 10</span>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-stone-800">子育てで一番大切なこと</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-12">
+        <p>子育てには正解がありません。だからこそ誰もが迷うし、不安になります。</p>
+        
+        <div class="text-center py-4 bg-emerald-50 rounded-xl border border-emerald-100">
+          <p class="text-emerald-800 font-bold text-lg">「子どもは親の完璧さを求めていない」</p>
+        </div>
+
+        <p class="text-center font-bold text-stone-700">子どもが心から求めているのは、</p>
+        <p class="text-center font-bold text-xl text-rose-500">「ただ、自分を大切に思ってくれる存在」</p>
+        <p class="text-center font-bold text-stone-700">それだけです。</p>
+
+        <div class="grid grid-cols-3 gap-2 text-center text-xs text-stone-500 pt-2">
+          <div class="p-2 border border-stone-200 rounded-lg">たくさん遊べなくても</div>
+          <div class="p-2 border border-stone-200 rounded-lg">手作りごはんじゃなくても</div>
+          <div class="p-2 border border-stone-200 rounded-lg">毎日笑顔じゃなくても</div>
+        </div>
+
+        <p class="text-center font-bold text-emerald-800 text-lg">今日も我が子を大切に思っている。それだけで100点満点です。</p>
+      </div>
+    </div>
+
+
+    <!-- ---------------------------------------------------- -->
+    <!-- PAGE 13: おわりに -->
+    <!-- ---------------------------------------------------- -->
+    <div id="page-13" class="page-transition hidden-page space-y-6">
+      <div class="text-center space-y-2">
+        <span class="text-rose-400 text-2xl"><i class="fa-solid fa-heart"></i></span>
+        <h3 class="font-serif text-2xl font-bold text-stone-800">おわりに</h3>
+        <div class="w-10 h-0.5 bg-emerald-400 mx-auto"></div>
+      </div>
+
+      <div class="card rounded-2xl p-6 sm:p-8 border shadow-sm space-y-6 font-medium leading-relaxed" id="content-13">
+        <p>親子の信頼関係は、大きなイベントではなく、毎日の小さなふれあいの積み重ねから育まれます。</p>
+        
+        <p class="bg-rose-50/50 p-4 rounded-xl border border-rose-100 text-center font-bold text-stone-700">
+          そして、そのふれあいを温かく深める<br>最高の方法のひとつが「ベビーマッサージ」です。
+        </p>
+
+        <p class="text-center">赤ちゃんとの今しかない貴重な時間を、もっと愛おしく、もっと楽しく過ごしてみませんか？</p>
+        
+        <p class="text-emerald-800 font-bold text-center">ぜひ、私たちの教室でお会いできることを心から楽しみにしています。</p>
+
+        <!-- 講師紹介 -->
+        <div class="border-t border-stone-200 pt-6 mt-6 space-y-4">
+          <div class="flex items-center space-x-4">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-2xl shadow-sm border border-emerald-200">
+              <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <div>
+              <p class="text-xs text-stone-500 font-semibold">ベビーマッサージ講師</p>
+              <h4 class="font-bold text-lg text-stone-800">吉野 陽子 <span class="text-sm font-normal text-emerald-700">🌿</span></h4>
+            </div>
+          </div>
+          <p class="text-xs text-stone-500 leading-relaxed">
+            親子の愛着形成をサポートするベビーマッサージ教室を主宰。多くのママに「頑張りすぎない、心地よい子育て」を届けるべく活動中。
+          </p>
+        </div>
+
+        <!-- LINE公式や予約への遷移アクションボタン（プレースホルダー） -->
+        <div class="pt-4 text-center">
+          <button onclick="alert('ここから教室の予約やLINE公式アカウントのお問い合わせフォームに遷移させることができます。')" class="w-full inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all">
+            <span>教室・レッスンの詳細を見る</span>
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- フッター：ナビゲーションボタン（下部固定） -->
+  <footer class="bg-white border-t border-stone-200 px-4 py-4 sticky bottom-0 z-40">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
+      
+      <!-- 前へボタン -->
+      <button id="btn-prev" onclick="prevPage()" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 active:bg-stone-100 transition-all text-sm font-semibold disabled:opacity-30 disabled:pointer-events-none">
+        <i class="fa-solid fa-chevron-left"></i>
+        <span>前へ</span>
+      </button>
+
+      <!-- ページ表示 -->
+      <div class="text-center">
+        <span id="page-indicator" class="text-xs font-bold text-stone-500 font-mono bg-stone-100 px-3 py-1.5 rounded-full">
+          0 / 13
+        </span>
+      </div>
+
+      <!-- 次へボタン -->
+      <button id="btn-next" onclick="nextPage()" class="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 shadow-md transition-all text-sm font-semibold">
+        <span>次へ</span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </footer>
+
+  <script>
+    let currentPage = 0;
+    const totalPages = 14; // 0 (表紙) から 13 (おわりに) までの全14ページ
+    let fontSize = 'normal';
+    let currentTheme = 'natural';
+
+    // スワイプ検出用変数
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    // ページロード時の初期設定
+    window.onload = function() {
+      updatePageUI();
+      setupSwipeEvents();
+    };
+
+    // ページの遷移処理
+    function updatePageUI() {
+      for (let i = 0; i < totalPages; i++) {
+        const page = document.getElementById(`page-${i}`);
+        if (page) {
+          if (i === currentPage) {
+            page.classList.remove('hidden-page');
+            page.classList.add('active-page');
+          } else {
+            page.classList.remove('active-page');
+            page.classList.add('hidden-page');
+          }
+        }
+      }
+
+      // 進行度バーの更新
+      const progressPercent = (currentPage / (totalPages - 1)) * 100;
+      document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+      // ページインジケーターの更新
+      const indicator = document.getElementById('page-indicator');
+      if (currentPage === 0) {
+        indicator.textContent = '表紙';
+      } else if (currentPage === 1) {
+        indicator.textContent = '目次';
+      } else {
+        indicator.textContent = `${currentPage - 1} / ${totalPages - 4}`; // はじめにとおわりを除いた章数表現
+      }
+
+      // ナビゲーションボタン制御
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+
+      btnPrev.disabled = (currentPage === 0);
+      
+      if (currentPage === totalPages - 1) {
+        btnNext.innerHTML = '<span>最初の表紙へ</span><i class="fa-solid fa-rotate-left ml-1"></i>';
+      } else {
+        btnNext.innerHTML = '<span>次へ</span><i class="fa-solid fa-chevron-right ml-1"></i>';
+      }
+
+      // ページ遷移後に上部へスクロール
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages - 1) {
+        currentPage++;
+      } else {
+        currentPage = 0; // ループして表紙へ
+      }
+      updatePageUI();
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        currentPage--;
+        updatePageUI();
+      }
+    }
+
+    function goToPage(pageIndex) {
+      if (pageIndex >= 0 && pageIndex < totalPages) {
+        currentPage = pageIndex;
+        updatePageUI();
+      }
+    }
+
+    // 文字サイズの変更
+    function changeFontSize(size) {
+      fontSize = size;
+      const sizeClasses = ['text-sz-normal', 'text-sz-large', 'text-sz-xlarge'];
+      
+      // 全てのコンテンツエリアにクラスを反映
+      for (let i = 2; i < totalPages; i++) {
+        const contentArea = document.getElementById(`content-${i}`);
+        if (contentArea) {
+          sizeClasses.forEach(cls => contentArea.classList.remove(cls));
+          contentArea.classList.add(`text-sz-${size}`);
+        }
+      }
+
+      // ボタンの選択状態の更新
+      const btnNormal = document.getElementById('btn-sz-normal');
+      const btnLarge = document.getElementById('btn-sz-large');
+      const btnXlarge = document.getElementById('btn-sz-xlarge');
+
+      [btnNormal, btnLarge, btnXlarge].forEach(btn => {
+        btn.classList.remove('bg-white', 'text-stone-800', 'shadow-sm');
+        btn.classList.add('text-stone-500');
+      });
+
+      const activeBtn = document.getElementById(`btn-sz-${size}`);
+      activeBtn.classList.remove('text-stone-500');
+      activeBtn.classList.add('bg-white', 'text-stone-800', 'shadow-sm');
+    }
+
+    // テーマ設定
+    function setTheme(theme) {
+      document.body.classList.remove('theme-natural', 'theme-sepia', 'theme-light');
+      document.body.classList.add(`theme-${theme}`);
+      currentTheme = theme;
+      toggleThemeMenu(true); // メニューを閉じる
+    }
+
+    function toggleThemeMenu(forceClose = false) {
+      const menu = document.getElementById('theme-menu');
+      if (forceClose || !menu.classList.contains('hidden')) {
+        menu.classList.add('hidden');
+      } else {
+        menu.classList.remove('hidden');
+      }
+    }
+
+    // スワイプ操作のサポート
+    function setupSwipeEvents() {
+      const container = document.getElementById('book-container');
+      
+      container.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+      }, false);
+
+      container.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipeGesture();
+      }, false);
+    }
+
+    function handleSwipeGesture() {
+      const threshold = 50; // スワイプと認識するピクセル数
+      if (touchStartX - touchEndX > threshold) {
+        // 左スワイプ（次へ）
+        nextPage();
+      } else if (touchEndX - touchStartX > threshold) {
+        // 右スワイプ（前へ）
+        prevPage();
+      }
+    }
+
+    // メニュー外部タップでテーマメニューを閉じる
+    document.addEventListener('click', function(e) {
+      const menu = document.getElementById('theme-menu');
+      const btn = menu.previousElementSibling;
+      if (!menu.contains(e.target) && !btn.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
